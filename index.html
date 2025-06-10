@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TeraBox File Downloader</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>TeraBox File Downloader</h2>
+    <input type="text" id="fileUrl" placeholder="Paste your TeraBox link here..." />
+    <button onclick="getDownloadLink()">Get Download Link</button>
+    <div class="result" id="resultBox"></div>
+  </div>
+
+  <script>
+    async function getDownloadLink() {
+      const input = document.getElementById('fileUrl');
+      const resultBox = document.getElementById('resultBox');
+      const userUrl = input.value.trim();
+
+      if (!userUrl) {
+        resultBox.innerHTML = '❗ Please enter a valid TeraBox link.';
+        return;
+      }
+
+      resultBox.innerHTML = '⏳ Please wait...';
+
+      try {
+        const encodedUrl = encodeURIComponent(userUrl);
+        const fetchUrl = `https://terabox.hnn.workers.dev/?url=${encodedUrl}`;
+
+        const response = await fetch(fetchUrl);
+        const text = await response.text();
+
+        // Try to detect a download link from the response
+        const match = text.match(/href="(https?:\/\/[^"]+)"/);
+
+        if (match && match[1]) {
+          const downloadLink = match[1];
+          resultBox.innerHTML = `
+            ✅ <strong>Download Link:</strong><br>
+            <a href="${downloadLink}" target="_blank">${downloadLink}</a>
+          `;
+        } else {
+          resultBox.innerHTML = '⚠️ No download link found. Make sure the link is correct.';
+        }
+      } catch (error) {
+        console.error(error);
+        resultBox.innerHTML = '❌ Failed to fetch the link. Try again later.';
+      }
+    }
+  </script>
+</body>
+</html>
