@@ -1,107 +1,941 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TeraBox File Downloader</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f2f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .container {
-      background: #fff;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 500px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      margin-bottom: 15px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #007bff;
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    .result {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #f8f9fa;
-      border-radius: 5px;
-      word-break: break-all;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Terabox Downloader</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #ffb700;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo span {
+            color: var(--success);
+        }
+        
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: -2rem auto 2rem auto;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .input-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border: 1px solid #dee2e6;
+        }
+        
+        .input-card h2 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-group {
+            display: flex;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        #terabox-url {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            background: white;
+            transition: all 0.3s;
+        }
+        
+        #terabox-url:focus {
+            box-shadow: inset 0 0 0 2px var(--primary);
+        }
+        
+        #fetch-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 150px;
+            justify-content: center;
+        }
+        
+        #fetch-btn:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            transform: translateY(-2px);
+        }
+        
+        #fetch-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            display: none;
+        }
+        
+        .loading-steps {
+            margin-top: 1.5rem;
+            text-align: left;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .loading-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        
+        .loading-step.active {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .loading-step.completed {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+        
+        .step-icon {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(67, 97, 238, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error {
+            color: var(--danger);
+            text-align: center;
+            padding: 2rem;
+            background: rgba(247, 37, 133, 0.05);
+            border: 1px solid rgba(247, 37, 133, 0.2);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .result {
+            display: none;
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        .file-info {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            align-items: center;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .file-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .file-details {
+            flex: 1;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+            font-size: 1.2rem;
+            color: var(--dark);
+        }
+        
+        .file-size {
+            color: var(--gray);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .file-type {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            min-width: 150px;
+            justify-content: center;
+        }
+        
+        .btn-download {
+            background: linear-gradient(135deg, var(--success), #3a86ff);
+            color: white;
+        }
+        
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 201, 240, 0.3);
+        }
+        
+        .btn-stream {
+            background: linear-gradient(135deg, var(--warning), #ff6b35);
+            color: white;
+        }
+        
+        .btn-stream:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 183, 0, 0.3);
+        }
+        
+        .media-player {
+            margin-top: 2rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: none;
+            border: 1px solid #dee2e6;
+        }
+        
+        .media-player h4 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .media-player video,
+        .media-player audio {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .download-info {
+            background: rgba(76, 201, 240, 0.1);
+            border: 1px solid rgba(76, 201, 240, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .download-info.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .how-to-use {
+            margin-top: 2rem;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .how-to-use h3 {
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .steps {
+            list-style-type: none;
+        }
+        
+        .steps li {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .step-text {
+            flex: 1;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: auto;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 0 1rem;
+                padding: 1.5rem;
+                border-radius: 12px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            #terabox-url {
+                border-radius: 8px 8px 0 0;
+                margin-bottom: 0;
+            }
+            
+            #fetch-btn {
+                border-radius: 0 0 8px 8px;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .file-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>TeraBox File Downloader</h2>
-    <input type="text" id="fileUrl" placeholder="Paste your TeraBox link here..." />
-    <button onclick="getDownloadLink()">Get Download Link</button>
-    <div class="result" id="resultBox"></div>
-  </div>
-
-  <script>
-    async function getDownloadLink() {
-      const input = document.getElementById('fileUrl');
-      const resultBox = document.getElementById('resultBox');
-      const userUrl = input.value.trim();
-
-      if (!userUrl) {
-        resultBox.innerHTML = '❗ Please enter a valid TeraBox link.';
-        return;
-      }
-
-      resultBox.innerHTML = '⏳ Please wait...';
-
-      try {
-        const encodedUrl = encodeURIComponent(userUrl);
-        const fetchUrl = `https://terabox.hnn.workers.dev/?url=${encodedUrl}`;
-
-        const response = await fetch(fetchUrl);
-        const text = await response.text();
-
-        // Try to detect a download link from the response
-        const match = text.match(/href="(https?:\/\/[^"]+)"/);
-
-        if (match && match[1]) {
-          const downloadLink = match[1];
-          resultBox.innerHTML = `
-            ✅ <strong>Download Link:</strong><br>
-            <a href="${downloadLink}" target="_blank">${downloadLink}</a>
-          `;
-        } else {
-          resultBox.innerHTML = '⚠️ No download link found. Make sure the link is correct.';
-        }
-      } catch (error) {
-        console.error(error);
-        resultBox.innerHTML = '❌ Failed to fetch the link. Try again later.';
-      }
-    }
-  </script>
+    <header>
+        <div class="logo">Terabox<span>Premium</span></div>
+        <div class="tagline">Download and stream files directly without any redirects</div>
+    </header>
+    
+    <div class="container">
+        <div class="input-card">
+            <h2><i class="fas fa-cloud-download-alt"></i> Direct Terabox Processor</h2>
+            <p>Paste your Terabox link below - we'll fetch direct download and streaming links for you</p>
+            
+            <div class="input-group">
+                <input type="text" id="terabox-url" placeholder="https://www.terabox.com/..." autocomplete="off">
+                <button id="fetch-btn">
+                    <i class="fas fa-magic"></i> Get Direct Links
+                </button>
+            </div>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <h3>Processing your file...</h3>
+            <p>Fetching direct download and streaming links</p>
+            
+            <div class="loading-steps">
+                <div class="loading-step" id="step1">
+                    <span class="step-icon"><i class="fas fa-link"></i></span>
+                    <span>Analyzing Terabox URL</span>
+                </div>
+                <div class="loading-step" id="step2">
+                    <span class="step-icon"><i class="fas fa-search"></i></span>
+                    <span>Extracting file information</span>
+                </div>
+                <div class="loading-step" id="step3">
+                    <span class="step-icon"><i class="fas fa-download"></i></span>
+                    <span>Generating direct download link</span>
+                </div>
+                <div class="loading-step" id="step4">
+                    <span class="step-icon"><i class="fas fa-play"></i></span>
+                    <span>Creating streaming link</span>
+                </div>
+                <div class="loading-step" id="step5">
+                    <span class="step-icon"><i class="fas fa-check"></i></span>
+                    <span>Finalizing links</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="error" id="error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Error Processing Your Request</h3>
+            <p id="error-message">Please check the URL and try again</p>
+        </div>
+        
+        <div class="result" id="result">
+            <div class="file-info">
+                <div class="file-icon" id="file-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="file-details">
+                    <h3 class="file-name" id="file-name">Filename.ext</h3>
+                    <div class="file-size" id="file-size">0 MB</div>
+                    <span class="file-type" id="file-type">Unknown</span>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-download" id="download-btn">
+                    <i class="fas fa-download"></i> Download Now
+                </button>
+                <button class="btn btn-stream" id="stream-btn" style="display: none;">
+                    <i class="fas fa-play"></i> Stream Here
+                </button>
+            </div>
+            
+            <div class="download-info" id="download-info">
+                <p><i class="fas fa-info-circle"></i> <strong>Direct download started!</strong> Your file will download directly from our servers without any redirects.</p>
+            </div>
+            
+            <div class="media-player" id="media-player">
+                <!-- Media player will be inserted here -->
+            </div>
+        </div>
+        
+        <div class="how-to-use">
+            <h3><i class="fas fa-info-circle"></i> How it works</h3>
+            <ul class="steps">
+                <li>
+                    <span class="step-number">1</span>
+                    <span class="step-text">Paste your Terabox share link</span>
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <span class="step-text">We process it in the background</span>
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <span class="step-text">Get direct download and streaming links</span>
+                </li>
+                <li>
+                    <span class="step-number">4</span>
+                    <span class="step-text">Download or stream without any redirects</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2024 TeraboxPremium. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#"><i class="fas fa-shield-alt"></i> Terms of Service</a>
+            <a href="#"><i class="fas fa-user-secret"></i> Privacy Policy</a>
+            <a href="#"><i class="fas fa-envelope"></i> Contact Us</a>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const teraboxUrlInput = document.getElementById('terabox-url');
+            const fetchBtn = document.getElementById('fetch-btn');
+            const loadingDiv = document.getElementById('loading');
+            const errorDiv = document.getElementById('error');
+            const errorMessage = document.getElementById('error-message');
+            const resultDiv = document.getElementById('result');
+            const downloadBtn = document.getElementById('download-btn');
+            const streamBtn = document.getElementById('stream-btn');
+            const fileNameEl = document.getElementById('file-name');
+            const fileSizeEl = document.getElementById('file-size');
+            const fileTypeEl = document.getElementById('file-type');
+            const fileIconEl = document.getElementById('file-icon');
+            const mediaPlayer = document.getElementById('media-player');
+            const downloadInfo = document.getElementById('download-info');
+            
+            let currentFileData = null;
+            
+            // Handle fetch button click
+            fetchBtn.addEventListener('click', async function() {
+                const teraboxUrl = teraboxUrlInput.value.trim();
+                
+                if (!teraboxUrl) {
+                    showError('Please enter a Terabox URL');
+                    return;
+                }
+                
+                if (!isValidTeraboxUrl(teraboxUrl)) {
+                    showError('Please enter a valid Terabox URL (should contain terabox.com)');
+                    return;
+                }
+                
+                showLoading();
+                
+                try {
+                    await processTeraboxUrl(teraboxUrl);
+                } catch (err) {
+                    console.error('Error:', err);
+                    showError('Failed to process the link. Please try again.');
+                }
+            });
+            
+            // Handle Enter key in input field
+            teraboxUrlInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    fetchBtn.click();
+                }
+            });
+            
+            // Stream button click handler
+            streamBtn.addEventListener('click', function() {
+                if (currentFileData && currentFileData.streamUrl) {
+                    createMediaPlayer(currentFileData);
+                    mediaPlayer.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+            
+            // Download button click handler
+            downloadBtn.addEventListener('click', function() {
+                if (currentFileData && currentFileData.downloadUrl) {
+                    startDirectDownload(currentFileData.downloadUrl, currentFileData.filename);
+                }
+            });
+            
+            // Check clipboard for Terabox links
+            if (navigator.clipboard && navigator.clipboard.readText) {
+                navigator.clipboard.readText().then(text => {
+                    if (isValidTeraboxUrl(text)) {
+                        teraboxUrlInput.value = text;
+                        // Show a hint that we detected a link
+                        showClipboardHint();
+                    }
+                }).catch(err => {
+                    console.log('Clipboard access not allowed:', err);
+                });
+            }
+            
+            function showClipboardHint() {
+                const hint = document.createElement('div');
+                hint.innerHTML = '<i class="fas fa-paste"></i> Link detected from clipboard';
+                hint.style.position = 'absolute';
+                hint.style.top = '5px';
+                hint.style.right = '5px';
+                hint.style.background = '#4cc9f0';
+                hint.style.color = 'white';
+                hint.style.padding = '5px 10px';
+                hint.style.borderRadius = '4px';
+                hint.style.fontSize = '0.85rem';
+                hint.style.zIndex = '100';
+                hint.style.opacity = '0';
+                hint.style.transition = 'opacity 0.3s';
+                
+                const inputGroup = document.querySelector('.input-group');
+                inputGroup.style.position = 'relative';
+                inputGroup.appendChild(hint);
+                
+                // Fade in
+                setTimeout(() => {
+                    hint.style.opacity = '1';
+                }, 10);
+                
+                // Fade out after 3 seconds
+                setTimeout(() => {
+                    hint.style.opacity = '0';
+                    setTimeout(() => {
+                        hint.remove();
+                    }, 300);
+                }, 3000);
+            }
+            
+            function isValidTeraboxUrl(url) {
+                return url.includes('terabox.com') || url.includes('teraboxapp.com') || url.includes('1024tera.com');
+            }
+            
+            function showLoading() {
+                loadingDiv.style.display = 'block';
+                errorDiv.style.display = 'none';
+                resultDiv.style.display = 'none';
+                fetchBtn.disabled = true;
+                fetchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                
+                // Animate loading steps
+                animateLoadingSteps();
+            }
+            
+            function animateLoadingSteps() {
+                const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
+                let currentStep = 0;
+                
+                const stepInterval = setInterval(() => {
+                    if (currentStep > 0) {
+                        const prevStep = document.getElementById(steps[currentStep - 1]);
+                        prevStep.classList.remove('active');
+                        prevStep.classList.add('completed');
+                        prevStep.querySelector('.step-icon').innerHTML = '<i class="fas fa-check"></i>';
+                    }
+                    
+                    if (currentStep < steps.length) {
+                        const currentStepEl = document.getElementById(steps[currentStep]);
+                        currentStepEl.classList.add('active');
+                        currentStepEl.querySelector('.step-icon').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                        currentStep++;
+                    } else {
+                        clearInterval(stepInterval);
+                    }
+                }, 800);
+            }
+            
+            function showError(message) {
+                loadingDiv.style.display = 'none';
+                errorDiv.style.display = 'block';
+                resultDiv.style.display = 'none';
+                errorMessage.textContent = message;
+                fetchBtn.disabled = false;
+                fetchBtn.innerHTML = '<i class="fas fa-magic"></i> Get Direct Links';
+                resetLoadingSteps();
+            }
+            
+            function showResult() {
+                loadingDiv.style.display = 'none';
+                errorDiv.style.display = 'none';
+                resultDiv.style.display = 'block';
+                fetchBtn.disabled = false;
+                fetchBtn.innerHTML = '<i class="fas fa-magic"></i> Get Direct Links';
+                resetLoadingSteps();
+                
+                // Scroll to result
+                setTimeout(() => {
+                    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+            
+            function resetLoadingSteps() {
+                const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
+                steps.forEach((stepId, index) => {
+                    const stepEl = document.getElementById(stepId);
+                    stepEl.classList.remove('active', 'completed');
+                    const icons = ['link', 'search', 'download', 'play', 'check'];
+                    stepEl.querySelector('.step-icon').innerHTML = `<i class="fas fa-${icons[index]}"></i>`;
+                });
+            }
+            
+            function setFileIcon(filename) {
+                const ext = filename.split('.').pop().toLowerCase();
+                const fileIcons = {
+                    'pdf': 'file-pdf',
+                    'doc': 'file-word', 'docx': 'file-word',
+                    'xls': 'file-excel', 'xlsx': 'file-excel',
+                    'ppt': 'file-powerpoint', 'pptx': 'file-powerpoint',
+                    'jpg': 'file-image', 'jpeg': 'file-image', 'png': 'file-image', 'gif': 'file-image',
+                    'mp4': 'file-video', 'mov': 'file-video', 'avi': 'file-video', 'mkv': 'file-video',
+                    'mp3': 'file-audio', 'wav': 'file-audio', 'flac': 'file-audio',
+                    'zip': 'file-archive', 'rar': 'file-archive', '7z': 'file-archive',
+                    'exe': 'file-code', 'apk': 'mobile-alt'
+                };
+                
+                const icon = fileIcons[ext] || 'file-alt';
+                fileIconEl.innerHTML = `<i class="fas fa-${icon}"></i>`;
+                
+                // Set file type
+                const fileTypes = {
+                    'pdf': 'Document', 'doc': 'Document', 'docx': 'Document',
+                    'xls': 'Spreadsheet', 'xlsx': 'Spreadsheet',
+                    'ppt': 'Presentation', 'pptx': 'Presentation',
+                    'jpg': 'Image', 'jpeg': 'Image', 'png': 'Image', 'gif': 'Image',
+                    'mp4': 'Video', 'mov': 'Video', 'avi': 'Video', 'mkv': 'Video',
+                    'mp3': 'Audio', 'wav': 'Audio', 'flac': 'Audio',
+                    'zip': 'Archive', 'rar': 'Archive', '7z': 'Archive',
+                    'exe': 'Executable', 'apk': 'Android App'
+                };
+                
+                fileTypeEl.textContent = fileTypes[ext] || 'File';
+                
+                // Show/hide stream button for media files
+                const isVideo = ['mp4', 'mov', 'avi', 'mkv'].includes(ext);
+                const isAudio = ['mp3', 'wav', 'flac'].includes(ext);
+                const isMedia = isVideo || isAudio;
+                
+                streamBtn.style.display = isMedia ? 'inline-flex' : 'none';
+                
+                return { isVideo, isAudio, isMedia, extension: ext };
+            }
+            
+            function createMediaPlayer(fileData) {
+                mediaPlayer.innerHTML = '';
+                
+                if (fileData.isVideo) {
+                    mediaPlayer.innerHTML = `
+                        <h4><i class="fas fa-play-circle"></i> Video Player</h4>
+                        <video controls crossorigin="anonymous">
+                            <source src="${fileData.streamUrl}" type="video/${fileData.extension}">
+                            Your browser does not support the video tag.
+                        </video>
+                    `;
+                } else if (fileData.isAudio) {
+                    mediaPlayer.innerHTML = `
+                        <h4><i class="fas fa-music"></i> Audio Player</h4>
+                        <audio controls crossorigin="anonymous">
+                            <source src="${fileData.streamUrl}" type="audio/${fileData.extension}">
+                            Your browser does not support the audio tag.
+                        </audio>
+                    `;
+                }
+                
+                mediaPlayer.style.display = 'block';
+            }
+            
+            function startDirectDownload(url, filename) {
+                // Show download info
+                downloadInfo.classList.add('show');
+                
+                // Create a temporary download link
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                
+                // Clean up
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    downloadInfo.classList.remove('show');
+                }, 5000);
+            }
+            
+            async function fetchDirectLinks(teraboxUrl) {
+                // This function fetches the direct links from the proxy service
+                const encodedUrl = encodeURIComponent(teraboxUrl);
+                const proxyBase = 'https://terabox-dl.qtcloud.workers.dev'; // Updated proxy service
+                
+                try {
+                    // Fetch the response from the proxy service
+                    const response = await fetch(`${proxyBase}/?url=${encodedUrl}`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch from proxy service');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Validate the response
+                    if (!data || !data.directDownload) {
+                        throw new Error('Invalid response from proxy');
+                    }
+                    
+                    return {
+                        downloadUrl: data.directDownload,
+                        streamUrl: data.streamUrl || data.directDownload,
+                        filename: data.filename || extractFilenameFromUrl(teraboxUrl),
+                        size: data.size || 'Unknown'
+                    };
+                    
+                } catch (error) {
+                    console.error('Error fetching direct links:', error);
+                    throw error;
+                }
+            }
+            
+            function extractFilenameFromUrl(url) {
+                try {
+                    const urlObj = new URL(url);
+                    const pathParts = urlObj.pathname.split('/');
+                    const filename = pathParts[pathParts.length - 1];
+                    
+                    if (filename && filename.includes('.')) {
+                        return decodeURIComponent(filename);
+                    }
+                } catch (e) {
+                    console.error('Error parsing URL:', e);
+                }
+                
+                return 'terabox_file';
+            }
+            
+            async function processTeraboxUrl(url) {
+                try {
+                    // Fetch direct links from the proxy service
+                    const linkData = await fetchDirectLinks(url);
+                    
+                    // Set file icon and get media info
+                    const mediaInfo = setFileIcon(linkData.filename);
+                    
+                    // Store current file data
+                    currentFileData = {
+                        filename: linkData.filename,
+                        downloadUrl: linkData.downloadUrl,
+                        streamUrl: linkData.streamUrl,
+                        isVideo: mediaInfo.isVideo,
+                        isAudio: mediaInfo.isAudio,
+                        isMedia: mediaInfo.isMedia,
+                        extension: mediaInfo.extension
+                    };
+                    
+                    // Update UI
+                    fileNameEl.textContent = currentFileData.filename;
+                    fileSizeEl.textContent = linkData.size;
+                    
+                    // Show result
+                    showResult();
+                    
+                } catch (error) {
+                    console.error('Error processing Terabox URL:', error);
+                    showError('Failed to fetch file information. Please try again or use a different link.');
+                }
+            }
+            
+            // Demo functionality for testing without a backend
+            teraboxUrlInput.addEventListener('input', function() {
+                if (this.value.includes('demo')) {
+                    this.value = 'https://www.terabox.com/s/1xyzabcdefg_movie.mp4';
+                    fetchBtn.click();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
