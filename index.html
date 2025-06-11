@@ -1,473 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terabox File Downloader</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1a2a6c, #2a5298, #3a7bd5);
-            color: #333;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 900px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
-            position: relative;
-        }
-        
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, #00d2ff, #3a7bd5, #1a2a6c);
-        }
-        
-        header {
-            padding: 30px 40px 20px;
-            text-align: center;
-            background: #f8f9ff;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        
-        h1 {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #1a2a6c, #3a7bd5);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-weight: 700;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-        
-        .logo i {
-            font-size: 2.5rem;
-            background: linear-gradient(90deg, #1a2a6c, #3a7bd5);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .description {
-            color: #5c6b8a;
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-        
-        .input-section {
-            padding: 30px 40px;
-            background: #fff;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        
-        .input-card {
-            background: #f8f9ff;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .input-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 4px;
-            background: linear-gradient(to bottom, #00d2ff, #3a7bd5);
-        }
-        
-        .input-group {
-            display: flex;
-            margin-bottom: 15px;
-            position: relative;
-        }
-        
-        #terabox-url {
-            flex: 1;
-            padding: 18px 20px;
-            border: 2px solid #e1e7ff;
-            border-radius: 12px 0 0 12px;
-            font-size: 1.05rem;
-            outline: none;
-            transition: all 0.3s ease;
-            background: #fff;
-        }
-        
-        #terabox-url:focus {
-            border-color: #3a7bd5;
-            box-shadow: 0 0 0 4px rgba(58, 123, 213, 0.2);
-        }
-        
-        #terabox-url::placeholder {
-            color: #a0aec0;
-        }
-        
-        #download-btn {
-            padding: 0 35px;
-            background: linear-gradient(to right, #3a7bd5, #1a5bb7);
-            color: white;
-            border: none;
-            border-radius: 0 12px 12px 0;
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        #download-btn:hover {
-            background: linear-gradient(to right, #1a5bb7, #0d4aa3);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(58, 123, 213, 0.3);
-        }
-        
-        .clipboard-hint {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #5c6b8a;
-            font-size: 0.95rem;
-            margin-top: 15px;
-            padding: 12px 15px;
-            background: rgba(58, 123, 213, 0.08);
-            border-radius: 10px;
-        }
-        
-        .clipboard-hint i {
-            color: #3a7bd5;
-            font-size: 1.2rem;
-        }
-        
-        .viewer-section {
-            padding: 0 40px 40px;
-        }
-        
-        .viewer-container {
-            background: #f8f9ff;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e1e7ff;
-        }
-        
-        .viewer-header {
-            padding: 18px 25px;
-            background: linear-gradient(to right, #3a7bd5, #1a5bb7);
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 600;
-        }
-        
-        .iframe-container {
-            width: 100%;
-            height: 500px;
-            position: relative;
-        }
-        
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
-        
-        .loading {
-            text-align: center;
-            display: none;
-            padding: 40px 20px;
-        }
-        
-        .spinner {
-            border: 5px solid rgba(58, 123, 213, 0.1);
-            border-radius: 50%;
-            border-top: 5px solid #3a7bd5;
-            width: 50px;
-            height: 50px;
-            animation: spin 1.2s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .error {
-            color: #e53e3e;
-            text-align: center;
-            padding: 30px;
-            border-radius: 15px;
-            background: rgba(229, 62, 62, 0.05);
-            display: none;
-            margin: 20px 0;
-        }
-        
-        .error i {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            display: block;
-        }
-        
-        .powered-by {
-            text-align: center;
-            padding: 20px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 0 0 20px 20px;
-        }
-        
-        .powered-by a {
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .container {
-                border-radius: 15px;
-            }
-            
-            header, .input-section, .viewer-section {
-                padding: 25px 20px;
-            }
-            
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            .input-group {
-                flex-direction: column;
-            }
-            
-            #terabox-url {
-                border-radius: 12px;
-                margin-bottom: 12px;
-                padding: 16px;
-            }
-            
-            #download-btn {
-                border-radius: 12px;
-                padding: 16px;
-                width: 100%;
-            }
-            
-            .iframe-container {
-                height: 350px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terabox Downloader</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #1a2a6c, #2a5298);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      background: #fff;
+      color: #333;
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    input[type="text"] {
+      width: 90%;
+      padding: 12px;
+      font-size: 16px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background-color: #007bff;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+
+    .timer {
+      margin: 15px 0;
+      font-weight: bold;
+      font-size: 18px;
+      color: #e74c3c;
+    }
+
+    iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+      margin-top: 20px;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">
-                <i class="fas fa-cloud-download-alt"></i>
-                <h1>Terabox Downloader</h1>
-            </div>
-            <p class="description">Download files from Terabox with our secure and fast download service. Just paste your link below!</p>
-        </header>
-        
-        <div class="input-section">
-            <div class="input-card">
-                <div class="input-group">
-                    <input type="text" id="terabox-url" placeholder="Paste Terabox file link here..." autocomplete="off">
-                    <button id="download-btn">
-                        <i class="fas fa-bolt"></i> Download
-                    </button>
-                </div>
-                <div class="clipboard-hint">
-                    <i class="fas fa-clipboard"></i>
-                    <span>We've detected a Terabox link in your clipboard. Click the button to process it.</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>Processing your file...</p>
-        </div>
-        
-        <div class="error">
-            <i class="fas fa-exclamation-triangle"></i>
-            <p>An error occurred. Please check the URL and try again.</p>
-        </div>
-        
-        <div class="viewer-section">
-            <div class="viewer-container">
-                <div class="viewer-header">
-                    <i class="fas fa-file-video"></i>
-                    <span>File Preview</span>
-                </div>
-                <div class="iframe-container">
-                    <iframe id="embedded-viewer" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
-                </div>
-            </div>
-        </div>
-        
-        <div class="powered-by">
-            Powered by: <a href="#" target="_blank">terabox.hnn.workers.dev</a>
-        </div>
-    </div>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const teraboxUrlInput = document.getElementById('terabox-url');
-            const downloadBtn = document.getElementById('download-btn');
-            const loadingDiv = document.querySelector('.loading');
-            const errorDiv = document.querySelector('.error');
-            const embeddedViewer = document.getElementById('embedded-viewer');
-            const clipboardHint = document.querySelector('.clipboard-hint');
-            
-            // Check clipboard on page load
-            checkClipboard();
-            
-            // Handle download button click
-            downloadBtn.addEventListener('click', function() {
-                const teraboxUrl = teraboxUrlInput.value.trim();
-                
-                if (!teraboxUrl) {
-                    showError('Please enter a Terabox URL');
-                    return;
-                }
-                
-                if (!isValidTeraboxUrl(teraboxUrl)) {
-                    showError('Please enter a valid Terabox URL');
-                    return;
-                }
-                
-                // Show loading, hide error
-                loadingDiv.style.display = 'block';
-                errorDiv.style.display = 'none';
-                
-                // Process the URL
-                processTeraboxUrl(teraboxUrl);
-            });
-            
-            // Process when user presses Enter
-            teraboxUrlInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    downloadBtn.click();
-                }
-            });
-            
-            // Function to validate Terabox URL
-            function isValidTeraboxUrl(url) {
-                return url.includes('terabox.com') || url.includes('teraboxapp.com');
-            }
-            
-            // Function to show error message
-            function showError(message) {
-                errorDiv.querySelector('p').textContent = message;
-                errorDiv.style.display = 'block';
-                
-                // Hide error after 5 seconds
-                setTimeout(() => {
-                    errorDiv.style.display = 'none';
-                }, 5000);
-            }
-            
-            // Function to process Terabox URL
-            function processTeraboxUrl(url) {
-                // Encode the URL for the proxy service
-                const encodedUrl = encodeURIComponent(url);
-                const proxyUrl = `https://terabox.hnn.workers.dev/?url=${encodedUrl}`;
-                
-                // Set the iframe source
-                embeddedViewer.src = proxyUrl;
-                
-                // Hide loading after a moment
-                setTimeout(() => {
-                    loadingDiv.style.display = 'none';
-                }, 1500);
-            }
-            
-            // Function to check clipboard for Terabox URL
-            function checkClipboard() {
-                navigator.clipboard.readText().then(text => {
-                    if (isValidTeraboxUrl(text)) {
-                        teraboxUrlInput.value = text;
-                        clipboardHint.style.display = 'flex';
-                    } else {
-                        clipboardHint.style.display = 'none';
-                    }
-                }).catch(err => {
-                    console.log('Could not read clipboard: ', err);
-                    clipboardHint.style.display = 'none';
-                });
-            }
-            
-            // Automatically process if URL is in clipboard
-            clipboardHint.addEventListener('click', function() {
-                downloadBtn.click();
-            });
-            
-            // Fix download functionality
-            function fixDownloadLink(url) {
-                // Create a temporary anchor element to trigger download
-                const a = document.createElement('a');
-                a.href = url;
-                a.target = '_blank';
-                
-                // Extract filename from URL if possible
-                const filenameMatch = url.match(/[^/\\&\?]+\.\w{3,4}(?=([\?&].*$|$))/);
-                if (filenameMatch) {
-                    a.download = filenameMatch[0];
-                } else {
-                    a.download = 'terabox-file';
-                }
-                
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            }
-            
-            // Listen for messages from the iframe
-            window.addEventListener('message', (event) => {
-                if (event.data && event.data.type === 'download') {
-                    fixDownloadLink(event.data.url);
-                }
-            }, false);
-        });
-    </script>
+  <div class="container">
+    <h2>Terabox Downloader</h2>
+    <input type="text" id="teraboxUrl" placeholder="Paste your Terabox link here" />
+    <br>
+    <button id="startBtn">Start</button>
+    <div class="timer" id="timerText"></div>
+    <iframe id="viewerIframe"></iframe>
+  </div>
+
+  <script>
+    const startBtn = document.getElementById('startBtn');
+    const input = document.getElementById('teraboxUrl');
+    const timerText = document.getElementById('timerText');
+    const iframe = document.getElementById('viewerIframe');
+
+    let countdown = 10;
+    let interval;
+
+    startBtn.addEventListener('click', () => {
+      const url = input.value.trim();
+      if (!url || (!url.includes('terabox.com') && !url.includes('teraboxapp.com'))) {
+        alert("Please enter a valid Terabox link.");
+        return;
+      }
+
+      timerText.innerText = `Preparing your download... ${countdown}s`;
+      startBtn.disabled = true;
+
+      interval = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+          timerText.innerText = `Preparing your download... ${countdown}s`;
+        } else {
+          clearInterval(interval);
+          timerText.innerText = "Loading download page...";
+          const finalUrl = `https://terabox.hnn.workers.dev/?url=${encodeURIComponent(url)}`;
+          iframe.src = finalUrl;
+          iframe.style.display = "block";
+        }
+      }, 1000);
+    });
+  </script>
 </body>
 </html>
