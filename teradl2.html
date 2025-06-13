@@ -99,7 +99,7 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 10px;
+      height: 5px;
       background: linear-gradient(90deg, #00d2ff, #3a7bd5, #1a2a6c);
     }
     
@@ -558,7 +558,7 @@
       }
       
       .iframe-container {
-        height: 150px;
+        height: 350px;
       }
       
       .domain-list {
@@ -597,7 +597,7 @@
       }
       
       .iframe-container {
-        height: 200px;
+        height: 300px;
       }
       
       /* Increased overlay height for small mobile */
@@ -609,19 +609,6 @@
         padding: 20px 15px;
       }
     }
-    @media (max-width: 480px) {
-  /* Add this new rule */
-  .iframe-container {
-    padding-top: 140px; /* Match the overlay height */
-    height: calc(300px + 140px); /* Original height + padding */
-  }
-  
-  /* Modify the existing rule */
-  iframe {
-    height: calc(100% - 140px); /* Adjust iframe height */
-    margin-top: 140px; /* Push iframe down below overlay */
-  }
-}
   </style>
 </head>
 <body>
